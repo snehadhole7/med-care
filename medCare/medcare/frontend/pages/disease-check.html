@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptom Checker - MedCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; font-family: 'Poppins', sans-serif; color: #2c3e50; }
+        .navbar { background: rgba(255,255,255,0.95); box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 1rem 0; }
+        .navbar-brand { font-weight: 700; color: #667eea !important; font-size: 1.5rem; }
+        .nav-link { color: #2c3e50 !important; font-weight: 500; margin-left: 1.5rem; }
+        main { padding: 60px 20px; }
+        .container-main { max-width: 900px; margin: 0 auto; }
+        .header-section { text-align: center; margin-bottom: 50px; color: white; }
+        .header-section h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 15px; }
+        .header-section p { font-size: 1.1rem; opacity: 0.95; }
+        .card-container { background: white; border-radius: 20px; padding: 45px; box-shadow: 0 15px 50px rgba(0,0,0,0.2); margin-bottom: 30px; }
+        .form-section-title { font-size: 1.4rem; font-weight: 700; color: #2c3e50; margin-bottom: 10px; }
+        .form-section-subtitle { color: #7f8c8d; margin-bottom: 30px; font-size: 0.95rem; }
+        .dropdown-section { position: relative; margin-bottom: 30px; }
+        .dropdown-label { display: block; font-weight: 600; margin-bottom: 12px; color: #2c3e50; font-size: 0.95rem; }
+        .btn-dropdown { width: 100%; padding: 14px 18px; background: white; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 15px; font-weight: 500; color: #2c3e50; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; }
+        .btn-dropdown:hover { border-color: #667eea; background: #f8f9ff; }
+        .btn-dropdown:active, .btn-dropdown.active { border-color: #667eea; background: #f0f4ff; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .dropdown-chevron { transition: transform 0.3s ease; color: #667eea; font-size: 14px; }
+        .btn-dropdown.active .dropdown-chevron { transform: rotate(180deg); }
+        .menu-items { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: white; border: 2px solid #667eea; border-radius: 12px; max-height: 400px; overflow-y: auto; z-index: 20000; box-shadow: 0 12px 40px rgba(102,126,234,0.25); display: none; }
+        .menu-items.show { display: block; }
+        .menu-group { padding: 8px 0; }
+        .menu-label { padding: 10px 18px; background: #f8f9ff; font-weight: 700; color: #667eea; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #e0e0e0; }
+        .menu-item { padding: 12px 18px; cursor: pointer; transition: all 0.2s ease; color: #2c3e50; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+        .menu-item:hover { background: #fffaed; padding-left: 28px; color: #667eea; font-weight: 500; }
+        .menu-item:active { background: #fff8e1; }
+        .selected-area { display: none; margin-bottom: 30px; padding: 20px; background: #f0f4ff; border-radius: 12px; border: 2px solid #e0e8ff; }
+        .selected-area.visible { display: block; }
+        .selected-label { font-weight: 700; color: #667eea; margin-bottom: 15px; font-size: 0.95rem; }
+        .tags-box { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tag { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; }
+        .tag-btn { background: rgba(255,255,255,0.3); border: none; color: white; cursor: pointer; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0; font-size: 12px; font-weight: bold; transition: all 0.2s; }
+        .tag-btn:hover { background: rgba(255,255,255,0.7); }
+        .actions { display: flex; gap: 15px; margin-top: 30px; }
+        .btn-submit { flex: 1; padding: 14px 28px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 6px 20px rgba(102,126,234,0.3); transition: all 0.2s; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(102,126,234,0.4); }
+        .btn-reset { padding: 14px 28px; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.2s; }
+        .btn-reset:hover { background: #f8f9ff; }
+        .results-box { display: none; margin-top: 40px; }
+        .results-title { font-size: 1.8rem; font-weight: 700; color: white; margin-bottom: 30px; text-align: center; }
+        .disease-box { background: white; border-radius: 16px; padding: 28px; margin-bottom: 20px; border-left: 5px solid #667eea; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .disease-box:hover { box-shadow: 0 12px 35px rgba(0,0,0,0.15); }
+        .disease-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 15px; }
+        .disease-info h4 { font-size: 1.3rem; font-weight: 700; color: #2c3e50; margin: 0; }
+        .disease-info p { color: #7f8c8d; font-size: 0.9rem; margin-top: 5px; }
+        .badge-match { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; }
+        .badge-severity { padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; margin-left: 8px; }
+        .severity-low { background: #d4edda; color: #155724; }
+        .severity-mid { background: #fff3cd; color: #856404; }
+        .severity-high { background: #f8d7da; color: #721c24; }
+        .section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #e0e0e0; }
+        .section-title { font-weight: 700; color: #667eea; margin-bottom: 10px; font-size: 12px; text-transform: uppercase; }
+        .section-list { list-style: none; padding: 0; }
+        .section-list li { padding: 6px 0 6px 20px; position: relative; color: #555; font-size: 13px; }
+        .section-list li::before { content: ''; position: absolute; left: 0; color: #667eea; font-weight: bold; }
+        .no-match { text-align: center; padding: 40px; background: white; border-radius: 16px; color: #7f8c8d; }
+        .loading { text-align: center; padding: 40px; background: white; border-radius: 16px; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #f0f0f0; border-top: 5px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        footer { background: rgba(255,255,255,0.95); padding: 30px 20px; text-align: center; color: #7f8c8d; margin-top: 60px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html"><i class="fas fa-hospital-user"></i> MedCare</a>
+            <div class="collapse navbar-collapse ms-auto">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="dashboard.html" id="dashboardLink">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html" id="loginLink">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container-main">
+            <div class="header-section">
+                <h1><i class="fas fa-stethoscope"></i> Symptom Checker</h1>
+                <p>Find possible health conditions based on your symptoms</p>
+            </div>
+
+            <div class="card-container">
+                <form id="symptomForm">
+                    <h2 class="form-section-title">Select Your Symptoms</h2>
+                    <p class="form-section-subtitle">Click below to choose from 60+ symptoms</p>
+
+                    <div class="dropdown-section">
+                        <label class="dropdown-label">Choose Symptoms</label>
+                        <button type="button" class="btn-dropdown" onclick="toggleMenu(); return false;">
+                            <span>Click to select symptoms...</span>
+                            <i class="fas fa-chevron-down dropdown-chevron"></i>
+                        </button>
+                        <div class="menu-items" id="menuItems"></div>
+                    </div>
+
+                    <div class="selected-area" id="selectedArea">
+                        <div class="selected-label">Selected Symptoms:</div>
+                        <div class="tags-box" id="tagsBox"></div>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="btn-submit"><i class="fas fa-search"></i> Analyze Symptoms</button>
+                        <button type="button" class="btn-reset" onclick="clearAllSymptoms(); return false;">Clear All</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="results-box" id="resultsBox">
+                <h2 class="results-title">Analysis Results</h2>
+                <div id="resultsContainer"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer><p>&copy; 2026 MedCare. Educational purposes only. Always consult healthcare professionals.</p></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="../js/common.js"></script>
+
+    <script>
+        // Symptoms database
+        const DB = {
+            'General': ['Fever', 'Chills', 'Night Sweats', 'Fatigue', 'Weakness', 'Malaise', 'Loss of Appetite', 'Weight Loss', 'Weight Gain'],
+            'Respiratory': ['Cough', 'Dry Cough', 'Productive Cough', 'Shortness of Breath', 'Sore Throat', 'Runny Nose', 'Nasal Congestion', 'Sneezing', 'Wheezing', 'Chest Congestion', 'Nasal Discharge', 'Throat Pain', 'Phlegm'],
+            'Digestive': ['Nausea', 'Vomiting', 'Diarrhea', 'Constipation', 'Abdominal Pain', 'Indigestion', 'Bloating', 'Stomach Cramps', 'Heartburn', 'Stomach Pain', 'Gas', 'Loss of Appetite'],
+            'Pain': ['Headache', 'Migraine', 'Chest Pain', 'Joint Pain', 'Muscle Pain', 'Back Pain', 'Neck Pain', 'Shoulder Pain', 'Leg Pain', 'Arm Pain', 'Body Pain', 'Neck Stiffness'],
+            'Neurological': ['Dizziness', 'Vertigo', 'Confusion', 'Memory Loss', 'Difficulty Concentrating', 'Anxiety', 'Depression', 'Tremors', 'Seizures', 'Numbness'],
+            'Skin': ['Skin Rash', 'Itching', 'Hives', 'Redness', 'Swelling', 'Eczema', 'Acne', 'Skin Lesions', 'Dry Skin', 'Skin Irritation', 'Blistering'],
+            'Eyes & Ears': ['Vision Problems', 'Blurred Vision', 'Eye Pain', 'Ear Pain', 'Hearing Loss', 'Tinnitus', 'Eye Discharge', 'Red Eyes', 'Eye Irritation', 'Ear Discharge'],
+            'Metabolic': ['Increased Thirst', 'Frequent Urination', 'Excessive Hunger', 'High Blood Pressure', 'Palpitations', 'Dizziness'],
+            'Other': ['Excessive Sweating', 'Dry Mouth', 'Chapped Lips', 'Easy Bruising', 'Bleeding Gums', 'Hair Loss', 'Insomnia', 'Fatigue', 'Rapid Heartbeat']
+        };
+
+        let selected = [];
+        let isOpen = false;
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            updateNavbar();
+            buildMenu();
+            setupForm();
+        });
+
+        function buildMenu() {
+            const menu = document.getElementById('menuItems');
+            let html = '';
+            for (const [cat, items] of Object.entries(DB)) {
+                html += '<div class="menu-group"><div class="menu-label">' + cat + '</div>';
+                items.forEach(item => {
+                    html += '<div class="menu-item" onclick="pickSymptom(\'' + item + '\'); return false;">' + item + '</div>';
+                });
+                html += '</div>';
+            }
+            menu.innerHTML = html;
+        }
+
+        function toggleMenu() {
+            const btn = document.querySelector('.btn-dropdown');
+            const menu = document.getElementById('menuItems');
+            isOpen = !isOpen;
+            if (isOpen) {
+                btn.classList.add('active');
+                menu.classList.add('show');
+            } else {
+                btn.classList.remove('active');
+                menu.classList.remove('show');
+            }
+        }
+
+        function pickSymptom(name) {
+            const sym = name.toLowerCase();
+            if (!selected.includes(sym)) {
+                selected.push(sym);
+                updateTags();
+                closeMenu();
+            }
+        }
+
+        function closeMenu() {
+            const btn = document.querySelector('.btn-dropdown');
+            const menu = document.getElementById('menuItems');
+            isOpen = false;
+            btn.classList.remove('active');
+            menu.classList.remove('show');
+        }
+
+        function updateTags() {
+            const area = document.getElementById('selectedArea');
+            const box = document.getElementById('tagsBox');
+            
+            if (selected.length === 0) {
+                area.classList.remove('visible');
+                return;
+            }
+            
+            area.classList.add('visible');
+            let html = '';
+            selected.forEach(s => {
+                html += '<div class="tag">' + s.charAt(0).toUpperCase() + s.slice(1) + '<button type="button" class="tag-btn" onclick="removeTag(\'' + s + '\'); return false;"></button></div>';
+            });
+            box.innerHTML = html;
+        }
+
+        function removeTag(sym) {
+            selected = selected.filter(s => s !== sym);
+            updateTags();
+        }
+
+        function clearAllSymptoms() {
+            selected = [];
+            updateTags();
+            document.getElementById('resultsBox').style.display = 'none';
+        }
+
+        function setupForm() {
+            document.getElementById('symptomForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                if (selected.length === 0) {
+                    alert('Please select at least one symptom');
+                    return false;
+                }
+                
+                const results = document.getElementById('resultsBox');
+                const container = document.getElementById('resultsContainer');
+                results.style.display = 'block';
+                container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Analyzing your symptoms...</p></div>';
+                
+                try {
+                    const res = await fetch('http://localhost:5000/api/diseases/check', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(localStorage.getItem('token') && { 'Authorization': 'Bearer ' + localStorage.getItem('token') })
+                        },
+                        body: JSON.stringify({ symptoms: selected })
+                    });
+                    
+                    if (!res.ok) {
+                        throw new Error('API error: ' + res.status);
+                    }
+                    
+                    const data = await res.json();
+                    if (data.possibleDiseases && data.possibleDiseases.length > 0) {
+                        displayResults(data.possibleDiseases);
+                    } else {
+                        container.innerHTML = '<div class="no-match">No diseases found for these symptoms. Please try different symptoms or ensure the backend is running.</div>';
+                    }
+                } catch (err) {
+                    console.error('Error:', err);
+                    container.innerHTML = '<div class="no-match"><strong>⚠️ Backend Error</strong><br><br>Could not connect to the disease database.<br><br>Please make sure the Node.js backend is running:<br><code style="background: #f0f0f0; padding: 8px; border-radius: 4px; display: block; margin: 12px 0;">cd backend && node server.js</code><br><br>Error: ' + err.message + '</div>';
+                }
+                return false;
+            });
+        }
+
+        function displayResults(diseases) {
+            const container = document.getElementById('resultsContainer');
+            // store globally to use by index in action buttons
+            window.__standaloneDiseaseResults = diseases;
+            if (!diseases || diseases.length === 0) {
+                container.innerHTML = '<div class="no-match">No matching conditions found for these symptoms.</div>';
+                return;
+            }
+            
+            let html = '';
+            diseases.forEach((d, i) => {
+                const match = Math.round(d.matchPercentage || 0);
+                const severity = d.severity || 'Moderate';
+                const severityClass = severity.toLowerCase() === 'high' ? 'severity-high' : severity.toLowerCase() === 'low' ? 'severity-low' : 'severity-mid';
+                
+                html += '<div class="disease-box"><div class="disease-top"><div class="disease-info"><h4>' + d.name + '</h4><p>' + (d.description || '') + '</p></div><div><span class="badge-match">' + match + '%</span><span class="badge-severity ' + severityClass + '">' + severity + '</span></div></div>';
+                
+                if (d.medicines && d.medicines.length > 0) {
+                    html += '<div class="section"><div class="section-title">Medicines</div><ul class="section-list">';
+                    d.medicines.forEach(m => html += '<li>' + (typeof m === 'string' ? m : m.name) + '</li>');
+                    html += '</ul></div>';
+                }
+                
+                if (d.precautions && d.precautions.length > 0) {
+                    html += '<div class="section"><div class="section-title">Precautions</div><ul class="section-list">';
+                    d.precautions.forEach(p => html += '<li>' + p + '</li>');
+                    html += '</ul></div>';
+                }
+                
+                if (d.diet && d.diet.foodsToEat && d.diet.foodsToEat.length > 0) {
+                    html += '<div class="section"><div class="section-title">Diet</div><ul class="section-list">';
+                    d.diet.foodsToEat.forEach(f => html += '<li>' + f + '</li>');
+                    html += '</ul></div>';
+                } else if (typeof d.diet === 'string') {
+                    html += '<div class="section"><div class="section-title">Diet</div><p>' + d.diet + '</p></div>';
+                }
+                
+                html += '<div class="section"><button class="btn btn-sm btn-outline-primary" onclick="saveDietFromStandaloneIndex(' + i + ')"><i class="fas fa-utensils"></i> Use for Diet Plan</button></div>';
+                html += '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        // Close menu on outside click
+        document.addEventListener('click', function(e) {
+            const btn = document.querySelector('.btn-dropdown');
+            const menu = document.getElementById('menuItems');
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                closeMenu();
+            }
+        });
+
+        function saveDietFromStandaloneIndex(i) {
+            try {
+                const list = Array.isArray(window.__standaloneDiseaseResults) ? window.__standaloneDiseaseResults : [];
+                const d = list[i];
+                if (!d) return;
+                const minimal = {
+                    name: d.name || 'Selected Condition',
+                    description: d.description || '',
+                    severity: d.severity || '',
+                    diet: d.diet || { foodsToEat: [], foodsToAvoid: [] },
+                    precautions: Array.isArray(d.precautions) ? d.precautions : []
+                };
+                localStorage.setItem('dietSelectedDisease', JSON.stringify(minimal));
+                window.location.href = 'dashboard.html#diet-plan';
+            } catch (err) {
+                console.error('Failed to save diet plan selection', err);
+                alert('Could not save diet plan selection.');
+            }
+        }
+    </script>
+</body>
+</html>

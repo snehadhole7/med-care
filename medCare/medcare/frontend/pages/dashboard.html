@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - MedCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-text {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-container {
+            display: flex;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar h5 {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 18px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            margin-bottom: 20px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar .nav-link {
+            display: block;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            color: #555;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar .nav-link:hover {
+            background: #f0f4ff;
+            color: #667eea;
+            border-left-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .sidebar .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-left-color: white;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+        .section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 30px;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section h2::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .disease-result {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .disease-result:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .disease-result h5 {
+            color: #333;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .disease-result .text-muted {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .match-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .table thead th {
+            font-weight: 600;
+            border: none;
+            padding: 15px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody td {
+            padding: 15px;
+            border-color: #e0e0e0;
+            color: #555;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .badge {
+            padding: 8px 12px;
+            font-size: 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .badge.bg-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px 20px;
+            font-weight: 500;
+        }
+
+        .alert-info {
+            background: #d4e8ff;
+            color: #003d82;
+        }
+
+        .alert-success {
+            background: #d4f8e8;
+            color: #003d42;
+        }
+
+        .alert-danger {
+            background: #ffe0e0;
+            color: #8b0000;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card h6 {
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-title {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white;
+            text-align: center;
+            padding: 25px 0;
+            margin-top: 0;
+            font-weight: 500;
+        }
+
+        .dash-shell {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #f6f7fb 0%, #f0f4ff 100%);
+            flex: 1;
+        }
+
+        .dash-sidebar {
+            width: 260px;
+            padding: 22px 18px;
+            background: linear-gradient(180deg, #4f46e5 0%, #7c3aed 100%);
+            color: rgba(255, 255, 255, 0.95);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            box-shadow: 0 20px 60px rgba(2, 6, 23, 0.22);
+        }
+
+        .dash-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            margin-bottom: 18px;
+        }
+
+        .dash-brand .dash-logo {
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .dash-nav {
+            margin-top: 14px;
+        }
+
+        .dash-nav .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 12px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.92);
+            text-decoration: none;
+            transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+            border: 1px solid transparent;
+        }
+
+        .dash-nav .nav-link:hover {
+            background: rgba(255, 255, 255, 0.14);
+            transform: translate3d(3px, 0, 0);
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        .dash-nav .nav-link.active {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.22);
+            box-shadow: 0 12px 30px rgba(2, 6, 23, 0.18);
+        }
+
+        .dash-nav .nav-link i {
+            width: 18px;
+            text-align: center;
+        }
+
+        .dash-main {
+            flex: 1;
+            padding: 22px 26px;
+            min-height: 100vh;
+        }
+
+        .dash-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 14px;
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(2, 6, 23, 0.08);
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+            position: sticky;
+            top: 12px;
+            z-index: 100;
+        }
+
+        .dash-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .dash-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 9999px;
+            border: 1px solid rgba(79, 70, 229, 0.20);
+            background: white;
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 10px 25px rgba(2, 6, 23, 0.08);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .dash-action-btn.primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 16px 35px rgba(79, 70, 229, 0.28);
+        }
+
+        .dash-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 35px rgba(2, 6, 23, 0.14);
+        }
+
+        .dash-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .dash-user .dash-user-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 9999px;
+            background: rgba(15, 23, 42, 0.04);
+            border: 1px solid rgba(15, 23, 42, 0.10);
+        }
+
+        .dash-user .dash-user-chip i {
+            color: #4f46e5;
+        }
+
+        .dash-content {
+            margin-top: 18px;
+        }
+
+        .dash-content .section {
+            background: white;
+            border-radius: 18px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            box-shadow: 0 12px 36px rgba(2, 6, 23, 0.09);
+        }
+
+        .dash-overview-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .dash-overview-header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .dash-overview-header p {
+            margin: 6px 0 0;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .dash-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .dash-stat-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 12px 35px rgba(2, 6, 23, 0.08);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .dash-stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(79, 70, 229, 0.15);
+            border-color: rgba(79, 70, 229, 0.2);
+        }
+
+        .dash-stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .dash-stat-top .title {
+            color: #475569;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: capitalize;
+        }
+
+        .dash-stat-value {
+            font-size: 36px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            margin: 12px 0 8px;
+            color: #0f172a;
+        }
+
+        .dash-stat-sub {
+            color: #64748b;
+            font-weight: 600;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .dash-two-col {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 14px;
+        }
+
+        .dash-panel {
+            background: white;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 12px 35px rgba(2, 6, 23, 0.08);
+        }
+
+        .dash-panel h3 {
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #475569;
+            margin: 0 0 12px;
+        }
+
+        .dash-mini-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .dash-mini-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 12px;
+            border-radius: 14px;
+            background: rgba(79, 70, 229, 0.06);
+            border: 1px solid rgba(79, 70, 229, 0.12);
+        }
+
+        .dash-mini-item .name {
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .dash-mini-item .meta {
+            color: #64748b;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        @media (max-width: 992px) {
+            .dash-stats {
+                grid-template-columns: 1fr;
+            }
+            .dash-two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dash-shell {
+                flex-direction: column;
+            }
+            .dash-sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .dash-main {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dash-shell">
+        <aside class="dash-sidebar">
+            <div class="dash-brand">
+                <span class="dash-logo"><i class="fas fa-plus"></i></span>
+                <span>MedCare</span>
+            </div>
+            <div class="dash-nav">
+                <a href="#overview" class="nav-link active" data-section="overview"><i class="fas fa-house"></i> Dashboard</a>
+                <a href="#profile" class="nav-link" data-section="profile"><i class="fas fa-user"></i> Profile</a>
+                <a href="#disease-check" class="nav-link" data-section="disease-check"><i class="fas fa-heartbeat"></i> Disease Check</a>
+                <a href="#appointments" class="nav-link" data-section="appointments"><i class="fas fa-calendar-check"></i> Appointments</a>
+                <a href="#analytics" class="nav-link" data-section="analytics"><i class="fas fa-chart-line"></i> Analytics</a>
+                <a href="#diet-plan" class="nav-link" data-section="diet-plan"><i class="fas fa-utensils"></i> Diet Plan</a>
+                <a href="#health-history" class="nav-link" data-section="health-history"><i class="fas fa-history"></i> Health History</a>
+            </div>
+        </aside>
+
+        <main class="dash-main">
+            <div class="dash-topbar">
+                <div class="dash-actions">
+                    <button class="dash-action-btn primary" type="button" data-bs-toggle="modal" data-bs-target="#bookAppointmentModal">
+                        <i class="fas fa-calendar-plus"></i>
+                        Make an appointment
+                    </button>
+                    <a class="dash-action-btn" href="#disease-check" data-section="disease-check">
+                        <i class="fas fa-stethoscope"></i>
+                        Disease check
+                    </a>
+                    <a class="dash-action-btn" href="../index.html">
+                        <i class="fas fa-house"></i>
+                        Home
+                    </a>
+                    <a class="dash-action-btn" id="adminLink" href="admin-dashboard.html" style="display: none;">
+                        <i class="fas fa-shield"></i>
+                        Admin
+                    </a>
+                    <button class="dash-action-btn" type="button" onclick="logout()">
+                        <i class="fas fa-arrow-right-from-bracket"></i>
+                        Logout
+                    </button>
+                </div>
+                <div class="dash-user">
+                    <span class="dash-user-chip">
+                        <i class="fas fa-circle-user"></i>
+                        <span id="topbarUserName">User</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="dash-content">
+                <!-- Overview Section -->
+                <section id="overview" class="section active">
+                    <div class="dash-overview-header">
+                        <div>
+                            <h1>Welcome, <span id="greetingName">User</span> 👋</h1>
+                            <p>Your health summary and quick actions</p>
+                        </div>
+                    </div>
+
+                    <!-- Key Stats -->
+                    <div class="dash-stats">
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-top">
+                                <div class="title">📅 Appointments</div>
+                            </div>
+                            <div class="dash-stat-value" id="statAppointments">0</div>
+                            <div class="dash-stat-sub" id="statUpcoming">0 upcoming this month</div>
+                        </div>
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-top">
+                                <div class="title">📋 Health Records</div>
+                            </div>
+                            <div class="dash-stat-value" id="statHistory">0</div>
+                            <div class="dash-stat-sub">diseases identified</div>
+                        </div>
+                        <div class="dash-stat-card">
+                            <div class="dash-stat-top">
+                                <div class="title">✅ Profile Status</div>
+                            </div>
+                            <div class="dash-stat-value" id="statProfile">--</div>
+                            <div class="dash-stat-sub">
+                                <button class="btn btn-sm btn-primary mt-2" onclick="scrollToSection('profile')">
+                                    <i class="fas fa-pencil"></i> Update Profile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Grid -->
+                    <div class="dash-two-col mt-4">
+                        <!-- Health Overview Panel -->
+                        <div class="dash-panel">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                <h3>📊 Your Health Overview</h3>
+                                <a href="#" onclick="scrollToSection('health-history')" class="text-primary small">View All →</a>
+                            </div>
+                            <div id="healthOverview">
+                                <div style="padding: 20px; text-align: center; color: #999;">
+                                    <i class="fas fa-heart" style="font-size: 40px; margin-bottom: 10px; color: #f472b6;"></i>
+                                    <p>No health records yet</p>
+                                    <p class="small">Start by checking diseases based on symptoms</p>
+                                    <a href="#disease-check" class="btn btn-sm btn-primary mt-2" onclick="document.querySelector('.nav-link[data-section=\'disease-check\']')?.click(); return false;">
+                                        <i class="fas fa-stethoscope"></i> Check Symptoms
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions Panel -->
+                        <div class="dash-panel">
+                            <h3>⚡ Quick Actions</h3>
+                            <div class="dash-mini-list">
+                                <div class="dash-mini-item" style="cursor: pointer;" onclick="document.querySelector('[data-bs-target=\"#bookAppointmentModal\"]').click()">
+                                    <div>
+                                        <div class="name">📅 Book Appointment</div>
+                                        <div class="meta">Schedule a consultation</div>
+                                    </div>
+                                    <i class="fas fa-arrow-right" style="color:#4f46e5"></i>
+                                </div>
+                                <div class="dash-mini-item" style="cursor: pointer;" onclick="document.querySelector('.nav-link[data-section=\'disease-check\']')?.click();">
+                                    <div>
+                                        <div class="name">🩺 Check Symptoms</div>
+                                        <div class="meta">Identify possible diseases</div>
+                                    </div>
+                                    <i class="fas fa-arrow-right" style="color:#4f46e5"></i>
+                                </div>
+                                <div class="dash-mini-item" style="cursor: pointer;" onclick="scrollToSection('diet-plan')">
+                                    <div>
+                                        <div class="name">🥗 Diet Plans</div>
+                                        <div class="meta">Get nutrition guidance</div>
+                                    </div>
+                                    <i class="fas fa-arrow-right" style="color:#4f46e5"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appointments Section -->
+                    <div class="dash-panel mt-4">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3>📅 Recent Appointments</h3>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#bookAppointmentModal">
+                                <i class="fas fa-plus"></i> New Appointment
+                            </button>
+                        </div>
+                        <div id="appointmentsContainer">
+                            <div style="padding: 40px 20px; text-align: center; color: #999;">
+                                <i class="fas fa-calendar" style="font-size: 40px; margin-bottom: 10px; color: #06b6d4;"></i>
+                                <p>No appointments yet</p>
+                                <p class="small">Book your first appointment to get started</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Profile Section -->
+                <section id="profile" class="section">
+                    <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border-radius: 16px; padding: 30px; color: white; margin-bottom: 30px;">
+                        <h2 style="color: white; margin: 0; border: none;">👤 My Profile</h2>
+                        <p style="margin: 8px 0 0; opacity: 0.9;">Manage your personal health information</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="dash-panel" style="padding: 30px;">
+                                <form id="profileForm">
+                                    <div class="form-group">
+                                        <label for="name" style="font-weight: 600; color: #333;">Full Name</label>
+                                        <input type="text" id="name" class="form-control" placeholder="Enter your full name" required style="padding: 12px; border-radius: 10px;">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="email" style="font-weight: 600; color: #333;">Email Address</label>
+                                        <input type="email" id="email" class="form-control" disabled style="padding: 12px; border-radius: 10px; background: #f5f5f5;">
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="age" style="font-weight: 600; color: #333;">Age</label>
+                                                <input type="number" id="age" class="form-control" placeholder="Enter your age" style="padding: 12px; border-radius: 10px;">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="gender" style="font-weight: 600; color: #333;">Gender</label>
+                                                <select id="gender" class="form-control" style="padding: 12px; border-radius: 10px;">
+                                                    <option value="">Select Gender</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
+                                                    <option value="other">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="phone" style="font-weight: 600; color: #333;">Phone Number</label>
+                                        <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" style="padding: 12px; border-radius: 10px;">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary" style="padding: 12px 30px; font-weight: 600; border-radius: 10px;">
+                                        <i class="fas fa-save"></i> Save Changes
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Disease Check Section -->
+                <section id="disease-check" class="section">
+                    <div style="background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); border-radius: 16px; padding: 30px; color: white; margin-bottom: 30px; box-shadow: 0 12px 40px rgba(236, 72, 153, 0.2); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                        <div>
+                            <h2 style="color: white; margin: 0; border: none;">🩺 Disease Check</h2>
+                            <p style="margin: 8px 0 0; opacity: 0.95; font-size: 16px;">Select your symptoms from our comprehensive list to identify possible conditions</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="dash-panel" style="padding: 35px; box-shadow: 0 12px 40px rgba(236, 72, 153, 0.08); border: 1px solid rgba(236, 72, 153, 0.1);">
+                                <form id="quickDiseaseForm">
+                                    <!-- Symptom Selector -->
+                                    <div class="form-group" style="margin-bottom: 28px;">
+                                        <label style="font-weight: 700; color: #0f172a; margin-bottom: 12px; display: block; font-size: 15px;">Select Your Symptoms</label>
+                                        <div style="position: relative; margin-bottom: 12px;">
+                                            <input 
+                                                type="text" 
+                                                id="symptomSearchInput" 
+                                                class="form-control" 
+                                                placeholder="Search and select symptoms (e.g., fever, cough, headache)" 
+                                                style="padding: 14px 16px; border-radius: 12px; border: 2px solid rgba(236, 72, 153, 0.15); font-size: 14px; background: white;"
+                                                autocomplete="off"
+                                            >
+                                            <div id="symptomDropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid #ec4899; border-top: none; border-radius: 0 0 12px 12px; max-height: 350px; overflow-y: auto; z-index: 1000; box-shadow: 0 12px 30px rgba(236, 72, 153, 0.2); display: none;">
+                                                <!-- Dropdown items will be populated by JavaScript -->
+                                            </div>
+                                        </div>
+                                        <small class="text-muted d-block" style="color: #64748b; font-size: 13px; font-weight: 500;">💡 Type to search or click below to select symptoms</small>
+                                    </div>
+
+                                    <!-- Selected Symptoms -->
+                                    <div id="selectedSymptomsContainer" style="display: none; margin-bottom: 24px;">
+                                        <label style="font-weight: 700; color: #0f172a; margin-bottom: 12px; display: block; font-size: 14px;">Selected Symptoms:</label>
+                                        <div id="selectedSymptomsTags" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 14px; background: rgba(236, 72, 153, 0.06); border-radius: 12px; min-height: 50px;">
+                                            <!-- Selected symptoms will appear here -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Hidden input for form submission -->
+                                    <input type="hidden" id="selectedSymptomsInput" name="symptoms" value="">
+
+                                    <button type="submit" class="btn btn-primary" style="padding: 14px 32px; font-weight: 700; border-radius: 10px; font-size: 15px; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25); transition: all 0.3s ease;" id="analyzeBtn" disabled>
+                                        <i class="fas fa-magnifying-glass"></i> Analyze Symptoms
+                                    </button>
+                                </form>
+                                <div id="quickResults" class="mt-5"></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="dash-panel" style="padding: 24px; text-align: center;">
+                                <h6 style="font-weight: 700; color: #0f172a; margin-bottom: 16px;">📋 Common Symptoms</h6>
+                                <div id="commonSymptomsList" style="display: grid; gap: 8px; text-align: left;">
+                                    <!-- Common symptoms will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Appointments Section -->
+                <section id="appointments" class="section">
+                    <div style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); border-radius: 16px; padding: 30px; color: white; margin-bottom: 30px;">
+                        <h2 style="color: white; margin: 0; border: none;">📅 My Appointments</h2>
+                        <p style="margin: 8px 0 0; opacity: 0.9;">Schedule and manage your appointments</p>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-lg-8">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookAppointmentModal" style="padding: 12px 30px; font-weight: 600; border-radius: 10px;">
+                                <i class="fas fa-plus"></i> Book New Appointment
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="appointmentsList">
+                        <div class="dash-panel" style="padding: 60px 20px; text-align: center;">
+                            <i class="fas fa-calendar" style="font-size: 50px; color: #06b6d4; margin-bottom: 15px; opacity: 0.3;"></i>
+                            <p style="color: #999; font-size: 16px;">No appointments scheduled</p>
+                            <p class="small" style="color: #bbb;">Click the button above to book your first appointment</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Health History Section -->
+                <section id="health-history" class="section">
+                    <div style="background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); border-radius: 16px; padding: 30px; color: white; margin-bottom: 30px;">
+                        <h2 style="color: white; margin: 0; border: none;">📋 Health History</h2>
+                        <p style="margin: 8px 0 0; opacity: 0.9;">Track your identified conditions and treatments</p>
+                    </div>
+
+                    <div id="healthHistoryList">
+                        <div class="dash-panel" style="padding: 60px 20px; text-align: center;">
+                            <i class="fas fa-heart" style="font-size: 50px; color: #8b5cf6; margin-bottom: 15px; opacity: 0.3;"></i>
+                            <p style="color: #999; font-size: 16px;">No health records yet</p>
+                            <p class="small" style="color: #bbb;">Start by checking symptoms in the Disease Check section</p>
+                            <a href="#disease-check" class="btn btn-sm btn-primary mt-3" onclick="scrollToSection('disease-check')">
+                                <i class="fas fa-stethoscope"></i> Check Now
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analytics Section -->
+                <section id="analytics" class="section">
+                    <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px; padding: 30px; color: white; margin-bottom: 30px;">
+                        <h2 style="color: white; margin: 0; border: none;">📊 Your Analytics</h2>
+                        <p style="margin: 8px 0 0; opacity: 0.9;">View your health statistics and trends</p>
+                    </div>
+                    
+                    <div class="dash-panel" style="padding: 40px; text-align: center;">
+                        <i class="fas fa-chart-bar" style="font-size: 50px; color: #10b981; margin-bottom: 15px; opacity: 0.3;"></i>
+                        <p style="color: #999; font-size: 16px;">Analytics coming soon</p>
+                        <p class="small" style="color: #bbb;">Your health metrics and trends will appear here</p>
+                    </div>
+                </section>
+
+                <!-- Diet Plan Section -->
+                <section id="diet-plan" class="section">
+                    <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 16px; padding: 30px; color: white; margin-bottom: 30px;">
+                        <h2 style="color: white; margin: 0; border: none;">🥗 Diet Plan</h2>
+                        <p style="margin: 8px 0 0; opacity: 0.9;">Personalized nutrition guidance for your health</p>
+                    </div>
+
+                    <div class="dash-panel" style="padding: 24px;" id="dietPlanContainer">
+                        <div style="padding: 40px 20px; text-align: center; color: #999;">
+                            <i class="fas fa-apple-alt" style="font-size: 50px; color: #f59e0b; margin-bottom: 15px; opacity: 0.3;"></i>
+                            <p style="color: #999; font-size: 16px;">No disease selected</p>
+                            <p class="small" style="color: #bbb;">Run a Disease Check and choose "Use for Diet Plan"</p>
+                            <a href="#disease-check" class="btn btn-sm btn-primary mt-2" onclick="document.querySelector('.nav-link[data-section=\'disease-check\']')?.click(); return false;">
+                                <i class="fas fa-stethoscope"></i> Go to Disease Check
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Book Appointment Modal -->
+    <div class="modal fade" id="bookAppointmentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-calendar-plus"></i> Book Appointment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="bookAppointmentForm">
+                        <div class="form-group">
+                            <label for="appointmentDate"><i class="fas fa-calendar"></i> Appointment Date & Time</label>
+                            <input type="datetime-local" id="appointmentDate" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appointmentType"><i class="fas fa-stethoscope"></i> Appointment Type</label>
+                            <select id="appointmentType" class="form-control" required>
+                                <option value="">Select Type</option>
+                                <option value="checkup">Regular Checkup</option>
+                                <option value="followup">Follow-up</option>
+                                <option value="consultation">Consultation</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appointmentSymptoms"><i class="fas fa-heartbeat"></i> Symptoms</label>
+                            <textarea id="appointmentSymptoms" class="form-control" rows="3" placeholder="List any symptoms..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appointmentNotes"><i class="fas fa-clipboard"></i> Additional Notes</label>
+                            <textarea id="appointmentNotes" class="form-control" rows="3" placeholder="Any additional information..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitBookAppointment()">
+                        <i class="fas fa-check"></i> Book Appointment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p class="mb-0">&copy; 2026 MedCare. All rights reserved. | Your Health, Our Priority</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="../js/common.js"></script>
+    <script>
+        // Check authentication
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        updateNavbar();
+
+        // Check if user is admin
+        const user = getUser();
+        if (user.role === 'admin') {
+            document.getElementById('adminLink').style.display = 'block';
+        }
+
+        if (user && user.name) {
+            const topbarUserName = document.getElementById('topbarUserName');
+            const greetingName = document.getElementById('greetingName');
+            if (topbarUserName) topbarUserName.textContent = user.name;
+            if (greetingName) greetingName.textContent = user.name;
+            const statProfile = document.getElementById('statProfile');
+            if (statProfile) statProfile.textContent = 'OK';
+        }
+
+        let activityChart;
+
+        function ensureActivityChart(labels) {
+            const ctx = document.getElementById('activityChart');
+            if (!ctx || typeof Chart === 'undefined') return;
+            if (activityChart) return;
+            activityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Appointments',
+                            data: labels.map(() => 0),
+                            borderColor: '#4f46e5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.12)',
+                            tension: 0.35,
+                            fill: true,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#4f46e5'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    transitions: {
+                        active: { animation: { duration: 0 } },
+                        resize: { animation: { duration: 0 } },
+                        show: { animation: { duration: 0 } },
+                        hide: { animation: { duration: 0 } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: 'rgba(15, 23, 42, 0.06)' }, ticks: { precision: 0 } }
+                    }
+                }
+            });
+        }
+
+        function updateActivityChartFromAppointments(appointments) {
+            const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            ensureActivityChart(labels);
+            if (!activityChart) return;
+            const counts = new Array(12).fill(0);
+            appointments.forEach(a => {
+                const d = new Date(a.appointmentDate);
+                if (!Number.isNaN(d.getTime())) {
+                    counts[d.getMonth()] += 1;
+                }
+            });
+            activityChart.data.labels = labels;
+            activityChart.data.datasets[0].data = counts;
+            activityChart.update();
+        }
+
+        function updateRecentAppointments(appointments) {
+            const el = document.getElementById('recentAppointments');
+            if (!el) return;
+            if (!appointments || appointments.length === 0) return;
+            const sorted = [...appointments].sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate));
+            const top = sorted.slice(0, 5);
+            el.innerHTML = top.map(a => {
+                const when = formatDate(a.appointmentDate);
+                const type = a.appointmentType || 'checkup';
+                const status = a.status || 'scheduled';
+                return `
+                    <div class="dash-mini-item">
+                        <div>
+                            <div class="name">${type}</div>
+                            <div class="meta">${when} · ${status}</div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color:#4f46e5"></i>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Load user profile
+        async function loadProfile() {
+            try {
+                const response = await apiRequest('/users/profile');
+                document.getElementById('name').value = response.name;
+                document.getElementById('email').value = response.email;
+                document.getElementById('age').value = response.age || '';
+                document.getElementById('gender').value = response.gender || '';
+                document.getElementById('phone').value = response.phone || '';
+            } catch (error) {
+                showAlert(error.message, 'danger');
+            }
+        }
+
+        // Update profile
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await apiRequest('/users/profile', 'PUT', {
+                    name: document.getElementById('name').value,
+                    age: document.getElementById('age').value,
+                    gender: document.getElementById('gender').value,
+                    phone: document.getElementById('phone').value
+                });
+                showAlert('Profile updated successfully', 'success');
+                loadProfile();
+            } catch (error) {
+                showAlert(error.message, 'danger');
+            }
+        });
+
+        // Quick disease check
+        document.getElementById('quickDiseaseForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const symptoms = document.getElementById('quickSymptoms').value
+                .split(',')
+                .map(s => s.trim().toLowerCase())
+                .filter(s => s);
+
+            if (symptoms.length === 0) {
+                showAlert('Please enter at least one symptom', 'danger');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('quickResults');
+            resultsDiv.innerHTML = '<div class="spinner"></div>';
+
+            try {
+                const response = await apiRequest('/diseases/check', 'POST', { symptoms });
+                displayDiseaseResults(response);
+            } catch (error) {
+                resultsDiv.innerHTML = '';
+                showAlert(error.message, 'danger');
+            }
+        });
+
+        function displayDiseaseResults(response) {
+            const resultsDiv = document.getElementById('quickResults');
+            const diseases = response.possibleDiseases;
+
+            if (diseases.length === 0) {
+                resultsDiv.innerHTML = '<div class="alert alert-info">No matching diseases found.</div>';
+                return;
+            }
+
+            let html = '';
+            diseases.forEach(disease => {
+                const matchPercentage = Math.round(disease.matchPercentage);
+                html += `
+                    <div class="disease-result">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5>${disease.name}</h5>
+                            <span class="match-badge">${matchPercentage}% match</span>
+                        </div>
+                        <p class="text-muted">${disease.description}</p>
+                    </div>
+                `;
+            });
+            resultsDiv.innerHTML = html;
+        }
+
+        // Load appointments
+        async function loadAppointments() {
+            try {
+                const response = await apiRequest('/users/appointments');
+                const appointmentsList = document.getElementById('appointmentsList');
+
+                const statAppointments = document.getElementById('statAppointments');
+                const statUpcoming = document.getElementById('statUpcoming');
+                if (statAppointments) statAppointments.textContent = response.length;
+                if (statUpcoming) {
+                    const now = new Date();
+                    const upcoming = response.filter(a => {
+                        const d = new Date(a.appointmentDate);
+                        return !Number.isNaN(d.getTime()) && d >= now;
+                    }).length;
+                    statUpcoming.textContent = `${upcoming} upcoming`;
+                }
+                updateRecentAppointments(response);
+                updateActivityChartFromAppointments(response);
+
+                if (response.length === 0) {
+                    appointmentsList.innerHTML = '<div class="alert alert-info">No appointments booked yet.</div>';
+                    return;
+                }
+
+                let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Date</th><th>Type</th><th>Status</th><th>Disease</th></tr></thead><tbody>';
+                response.forEach(apt => {
+                    html += `
+                        <tr>
+                            <td>${formatDate(apt.appointmentDate)}</td>
+                            <td>${apt.appointmentType}</td>
+                            <td><span class="badge bg-info">${apt.status}</span></td>
+                            <td>${apt.diseaseId ? apt.diseaseId.name : 'General'}</td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table></div>';
+                appointmentsList.innerHTML = html;
+            } catch (error) {
+                showAlert(error.message, 'danger');
+            }
+        }
+
+        // Book appointment
+        async function submitBookAppointment() {
+            try {
+                const response = await apiRequest('/users/appointments', 'POST', {
+                    appointmentDate: document.getElementById('appointmentDate').value,
+                    appointmentType: document.getElementById('appointmentType').value,
+                    symptoms: document.getElementById('appointmentSymptoms').value.split(','),
+                    notes: document.getElementById('appointmentNotes').value
+                });
+                showAlert('Appointment booked successfully', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('bookAppointmentModal')).hide();
+                loadAppointments();
+            } catch (error) {
+                showAlert(error.message, 'danger');
+            }
+        }
+
+        // Load health history
+        async function loadHealthHistory() {
+            try {
+                const response = await apiRequest('/users/health-history');
+                const historyList = document.getElementById('healthHistoryList');
+
+                const statHistory = document.getElementById('statHistory');
+                if (statHistory) statHistory.textContent = response.length;
+
+                if (response.length === 0) {
+                    historyList.innerHTML = '<div class="alert alert-info">No health history yet.</div>';
+                    return;
+                }
+
+                let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Disease</th><th>Date</th><th>Status</th></tr></thead><tbody>';
+                response.forEach(history => {
+                    html += `
+                        <tr>
+                            <td>${history.disease}</td>
+                            <td>${formatDate(history.dateIdentified)}</td>
+                            <td>${history.status}</td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table></div>';
+                historyList.innerHTML = html;
+            } catch (error) {
+                showAlert(error.message, 'danger');
+            }
+        }
+
+        // Section navigation
+        document.querySelectorAll('.nav-link[data-section], .dash-action-btn[data-section]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const sectionId = link.dataset.section;
+                if (!sectionId) return;
+                const target = document.getElementById(sectionId);
+                if (!target) return;
+                e.preventDefault();
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.nav-link[data-section]').forEach(l => l.classList.remove('active'));
+                const sidebarLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+                if (sidebarLink) sidebarLink.classList.add('active');
+                target.classList.add('active');
+                window.scrollTo(0, 0);
+            });
+        });
+
+        // Load initial data
+        loadProfile();
+        loadAppointments();
+        loadHealthHistory();
+    </script>
+</body>
+</html>

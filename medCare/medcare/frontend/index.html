@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedCare - Healthcare Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-hospital"></i> MedCare
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/login.html" id="loginLink">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pages/register.html" id="registerLink">Register</a>
+                    </li>
+                    <li class="nav-item" id="dashboardLink" style="display: none;">
+                        <a class="nav-link" href="pages/dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item" id="logoutLink" style="display: none;">
+                        <a class="nav-link" href="#" onclick="logout()">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section text-white py-5">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3" data-aos="fade-up">Welcome to MedCare</h1>
+            <p class="lead mb-4" data-aos="fade-up" data-aos-delay="80">Your Smart Healthcare Management System</p>
+            <p class="fs-5 mb-4" data-aos="fade-up" data-aos-delay="140">Identify diseases based on symptoms, get medicine & diet recommendations</p>
+            <div class="button-group" data-aos="fade-up" data-aos-delay="220">
+                <a href="pages/disease-check.html" class="btn btn-light btn-lg me-2" id="diseaseCheckBtn">Check Disease</a>
+                <a href="pages/login.html" class="btn btn-outline-light btn-lg">Get Started</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="features py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="fade-up">Key Features</h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card feature-card" data-aos="zoom-in" data-aos-delay="0">
+                        <div class="card-body text-center">
+                            <i class="fas fa-microscope feature-icon text-primary mb-3"></i>
+                            <h5 class="card-title">Disease Check</h5>
+                            <p class="card-text">Identify possible diseases based on your symptoms</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card feature-card" data-aos="zoom-in" data-aos-delay="80">
+                        <div class="card-body text-center">
+                            <i class="fas fa-pills feature-icon text-success mb-3"></i>
+                            <h5 class="card-title">Medicine Guide</h5>
+                            <p class="card-text">Get medicine suggestions with dosage details</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card feature-card" data-aos="zoom-in" data-aos-delay="160">
+                        <div class="card-body text-center">
+                            <i class="fas fa-apple-alt feature-icon text-danger mb-3"></i>
+                            <h5 class="card-title">Diet Plans</h5>
+                            <p class="card-text">Personalized diet recommendations</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card feature-card" data-aos="zoom-in" data-aos-delay="240">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line feature-icon text-info mb-3"></i>
+                            <h5 class="card-title">Health Analytics</h5>
+                            <p class="card-text">Track your health trends and statistics</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta py-5">
+        <div class="container text-center">
+            <h2 class="mb-3" data-aos="fade-up">Start Your Health Journey Today</h2>
+            <p class="lead mb-4" data-aos="fade-up" data-aos-delay="100">Join thousands of users managing their health with MedCare</p>
+            <a href="pages/register.html" class="btn btn-primary btn-lg" data-aos="fade-up" data-aos-delay="180">Sign Up Now</a>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 MedCare. All rights reserved.</p>
+            <p class="small mt-2">⚠️ This system is for educational purposes only and does not replace professional medical advice.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script src="js/common.js"></script>
+</body>
+</html>
